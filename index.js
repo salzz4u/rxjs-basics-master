@@ -1,5 +1,5 @@
-import {from, fromEvent} from 'rxjs';
-import {mapTo, pluck} from "rxjs/operators";
+import {fromEvent} from 'rxjs';
+import {map} from "rxjs/operators";
 
 /*
  * Any code samples you want to play with can go in this file.
@@ -7,10 +7,16 @@ import {mapTo, pluck} from "rxjs/operators";
  * after running npm start.
  */
 
-const source$ = fromEvent(document, 'keyup');
+function calculateScrollPercent(elem) {
+    const {clientHeight, scrollTop, scrollHeight} = elem;
+    return (scrollTop / (scrollHeight - clientHeight)) * 100;
+}
 
-const pluck$ = source$.pipe(pluck('code'));
-const mapTo$ = source$.pipe(mapTo('code'));
+const scroll$ = fromEvent(document, 'scroll');
 
-// pluck$.subscribe(console.log);
-mapTo$.subscribe(console.log);
+const progress$ = scroll$.pipe(
+    map(({target}) => calculateScrollPercent(target.scrollingElement))
+);
+const progressBar = document.querySelector('.progressBar');
+progress$.subscribe(progress => progressBar.style.width = `${progress}%`);
+

@@ -71,3 +71,10 @@ body {
   position: relative;
   top: 6px;
 }
+.progressBar {
+  position: fixed;
+  height: 4px;
+  background: #b7529b;
+  width: 0;
+  top: 0;
+}
