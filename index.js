@@ -1,16 +1,16 @@
-import {from} from 'rxjs';
-// import 'regenerator-runtime/runtime'
+import {from, fromEvent} from 'rxjs';
+import {mapTo, pluck} from "rxjs/operators";
 
 /*
  * Any code samples you want to play with can go in this file.
  * Updates will trigger a live reload on http://localhost:1234/
  * after running npm start.
  */
-function* hello() {
-    yield 'Hello';
-    yield 'World';
-}
 
-const iterator = hello();
+const source$ = fromEvent(document, 'keyup');
 
-const df = from(iterator).subscribe(console.log);
+const pluck$ = source$.pipe(pluck('code'));
+const mapTo$ = source$.pipe(mapTo('code'));
+
+// pluck$.subscribe(console.log);
+mapTo$.subscribe(console.log);
