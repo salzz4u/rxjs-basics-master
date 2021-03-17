@@ -1,14 +1,15 @@
 import {interval} from 'rxjs';
-import {filter, scan, shareReplay, take, tap} from "rxjs/operators";
+import {filter, mapTo, scan, shareReplay, take, tap} from "rxjs/operators";
 
 const countDownNumber = 15;
 
-const scanFunc = (x, y) => {
-    return countDownNumber - y
+const scanFunc = (accumulator, currentValue) => {
+    return accumulator + currentValue
 }
 const source$ = interval(1000).pipe(
     take(countDownNumber + 1),
-    scan(scanFunc, countDownNumber),
+    mapTo(-1),
+    scan(scanFunc, countDownNumber + 1),
     tap(() => console.log('...')),
     shareReplay());
 
