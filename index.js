@@ -1,18 +1,22 @@
 import {interval} from 'rxjs';
-import {reduce, scan, take} from "rxjs/operators";
+import {filter, scan, shareReplay, take, tap} from "rxjs/operators";
 
-/*
- * Any code samples you want to play with can go in this file.
- * Updates will trigger a live reload on http://localhost:1234/
- * after running npm start.
- */
+const countDownNumber = 15;
 
-const reducerFunc = (accumulator, currentValue) => {
-    return accumulator + currentValue;
+const scanFunc = (x, y) => {
+    return countDownNumber - y
 }
+const source$ = interval(1000).pipe(
+    take(countDownNumber + 1),
+    scan(scanFunc, countDownNumber),
+    tap(() => console.log('...')),
+    shareReplay());
 
-const source$ = interval(1000);
+const countDown$ = source$.pipe(filter(x => x > 0));
+const takeOff$ = source$.pipe(filter(x => x === 0));
+const mid$ = source$.pipe(filter(x => x === Math.round(countDownNumber / 2)));
 
-const reduce$ = source$.pipe(take(3), scan(reducerFunc, 0))
+countDown$.subscribe(console.log);
+takeOff$.subscribe(() => console.log('takeoff!'));
+mid$.subscribe(() => console.log('halfway!'));
 
-reduce$.subscribe({next: console.log, complete: () => console.log('complete!')});
