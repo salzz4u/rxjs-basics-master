@@ -1,5 +1,5 @@
-import {fromEvent} from 'rxjs';
-import {map} from "rxjs/operators";
+import {interval} from 'rxjs';
+import {reduce, take} from "rxjs/operators";
 
 /*
  * Any code samples you want to play with can go in this file.
@@ -7,16 +7,12 @@ import {map} from "rxjs/operators";
  * after running npm start.
  */
 
-function calculateScrollPercent(elem) {
-    const {clientHeight, scrollTop, scrollHeight} = elem;
-    return (scrollTop / (scrollHeight - clientHeight)) * 100;
+function reducerFunc(accumulator, currentValue) {
+    return accumulator + currentValue;
 }
 
-const scroll$ = fromEvent(document, 'scroll');
+const source$ = interval(1000);
 
-const progress$ = scroll$.pipe(
-    map(({target}) => calculateScrollPercent(target.scrollingElement))
-);
-const progressBar = document.querySelector('.progressBar');
-progress$.subscribe(progress => progressBar.style.width = `${progress}%`);
+const reduce$ = source$.pipe(take(3), reduce(reducerFunc, 0))
 
+reduce$.subscribe({next: console.log, complete: () => console.log('complete!')});
