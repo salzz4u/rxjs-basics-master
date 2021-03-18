@@ -1,13 +1,10 @@
 import {fromEvent} from 'rxjs';
-import {debounceTime, distinctUntilChanged, pluck} from "rxjs/operators";
+import {throttleTime} from "rxjs/operators";
 import {subFunc} from "./helper";
 
-const input = document.getElementById('demo');
-const source$ = fromEvent(input, 'keyup');
+const source$ = fromEvent(document, 'click');
 
 source$.pipe(
-    debounceTime(1000),
-    pluck('target', 'value'),
-    distinctUntilChanged()
-).subscribe(subFunc('type'))
+    throttleTime(3000),
+).subscribe(subFunc('clicked'))
 
