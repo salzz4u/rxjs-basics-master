@@ -1,5 +1,5 @@
-import {interval} from 'rxjs';
-import {distinctUntilChanged, map, take} from "rxjs/operators";
+import {from} from 'rxjs';
+import {distinctUntilKeyChanged} from "rxjs/operators";
 
 const subFunc = (msg, next = true, complete = true) => {
     return {
@@ -8,15 +8,13 @@ const subFunc = (msg, next = true, complete = true) => {
     }
 }
 
-const array = [1, 2, 2, 3, 3, '3', 4, 5];
+const source$ = from([{a:1}, {a: 2}, {a:2}, {a:3}, {a:3}, {a:2}, {a:4}, {a:5}]);
 
-const delayedArrayItem$ = interval(500)
+const delayedArrayItem$ = source$
     .pipe(
-        take(array.length),
-        map(i => array[i]),
-        distinctUntilChanged()
+        distinctUntilKeyChanged('a') // skips if prev and current value are the same
     );
 
-delayedArrayItem$.subscribe(subFunc('array'))
+delayedArrayItem$.subscribe(subFunc('list'))
 
 
