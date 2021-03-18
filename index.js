@@ -1,5 +1,5 @@
 import {fromEvent} from 'rxjs';
-import {filter, first, map, take} from "rxjs/operators";
+import {filter, first, map, take, takeWhile} from "rxjs/operators";
 
 
 const source$ = fromEvent(document, 'click')
@@ -8,8 +8,7 @@ const source$ = fromEvent(document, 'click')
     );
 
 const first$ = source$.pipe(
-    filter(e => e.y > 100),
-    take(3)
+   takeWhile(({y}) => y <= 400, true)
 );
 
 first$.subscribe({
