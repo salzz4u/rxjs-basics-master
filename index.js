@@ -1,5 +1,5 @@
-import {fromEvent} from 'rxjs';
-import {map} from "rxjs/operators";
+import {asyncScheduler, fromEvent} from 'rxjs';
+import {map, tap, throttleTime} from "rxjs/operators";
 
 /*
  * Any code samples you want to play with can go in this file.
@@ -15,7 +15,11 @@ function calculateScrollPercent(elem) {
 const scroll$ = fromEvent(document, 'scroll');
 
 const progress$ = scroll$.pipe(
-    map(({target}) => calculateScrollPercent(target.scrollingElement))
+    throttleTime(30, asyncScheduler, {
+        leading: false, trailing: true
+    }),
+    map(({target}) => calculateScrollPercent(target.scrollingElement)),
+    tap(console.log)
 );
 const progressBar = document.querySelector('.progressBar');
 progress$.subscribe(progress => progressBar.style.width = `${progress}%`);
