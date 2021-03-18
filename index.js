@@ -1,23 +1,18 @@
-import {interval} from 'rxjs';
-import {filter, mapTo, scan, shareReplay, take, tap} from "rxjs/operators";
+import {fromEvent} from 'rxjs';
+import {filter, first, map, take} from "rxjs/operators";
 
-const countDownNumber = 15;
 
-const scanFunc = (accumulator, currentValue) => {
-    return accumulator + currentValue
-}
-const source$ = interval(1000).pipe(
-    take(countDownNumber + 1),
-    mapTo(-1),
-    scan(scanFunc, countDownNumber + 1),
-    tap(() => console.log('...')),
-    shareReplay());
+const source$ = fromEvent(document, 'click')
+    .pipe(
+        map((e) =>  ({x:e.clientX, y:e.clientY})) // object destructuring
+    );
 
-const countDown$ = source$.pipe(filter(x => x > 0));
-const takeOff$ = source$.pipe(filter(x => x === 0));
-const mid$ = source$.pipe(filter(x => x === Math.round(countDownNumber / 2)));
+const first$ = source$.pipe(
+    filter(e => e.y > 100),
+    take(3)
+);
 
-countDown$.subscribe(console.log);
-takeOff$.subscribe(() => console.log('takeoff!'));
-mid$.subscribe(() => console.log('halfway!'));
-
+first$.subscribe({
+    next: console.log,
+    complete: () => console.log('completed!')
+});
