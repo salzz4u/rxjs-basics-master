@@ -1,7 +1,8 @@
-import {interval} from 'rxjs';
-import {filter, scan, shareReplay, take, tap} from "rxjs/operators";
+import {timer} from 'rxjs';
+import {filter, scan, shareReplay, take} from "rxjs/operators";
 
-const countDownNumber = 15;
+const countDownNumber = 10;
+const speed = 1000;
 
 const scanFunc = (x, y) => {
     return countDownNumber - y
@@ -13,7 +14,7 @@ const subFunc = (msg, next= true, complete = true) => {
     }
 }
 
-const source$ = interval(1000).pipe(
+const source$ = timer(0, speed).pipe(
     take(countDownNumber + 1),
     scan(scanFunc, countDownNumber),
     // tap(() => console.log('...')),
